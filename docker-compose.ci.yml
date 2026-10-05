@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # 1. CI Disposable Isolated PostgreSQL Database
+  postgres_ci:
+    image: postgres:16-alpine
+    container_name: smart_review_ci_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: smart_review_ci
+      POSTGRES_USER: ci_user
+      POSTGRES_PASSWORD: ci_secret_password
+    ports:
+      - "5433:5432"
+    networks:
+      - ci_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ci_user -d smart_review_ci"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. CI Python FastAPI Analytics Engine
+  analytics_ci:
+    build:
+      context: ./analytics
+      dockerfile: Dockerfile
+    container_name: smart_review_ci_analytics
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    networks:
+      - ci_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/analytics/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # 3. CI Node.js Express Backend API
+  backend_ci:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smart_review_ci_backend
+    restart: unless-stopped
+    ports:
+      - "5001:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://ci_user:ci_secret_password@postgres_ci:5432/smart_review_ci?schema=public
+      - ANALYTICS_URL=http://analytics_ci:8000
+      - ANALYTICS_SERVICE_URL=http://analytics_ci:8000
+      - JWT_SECRET=ci-disposable-jwt-secret-key-2026
+      - JWT_EXPIRES_IN=1d
+      - CORS_ORIGIN=http://localhost:3000
+    networks:
+      - ci_network
+    depends_on:
+      postgres_ci:
+        condition: service_healthy
+      analytics_ci:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+networks:
+  ci_network:
+    driver: bridge

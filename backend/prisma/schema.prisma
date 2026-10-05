@@ -1,0 +1,254 @@
+// Prisma Schema for Smart Review Analytics Platform
+// Supports PostgreSQL (production/docker) & SQLite (local development zero-config)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// -------------------------------------------------------------
+// 1. AUTH & USER MANAGEMENT (ES Unit III - CRM, RBAC, Roles)
+// -------------------------------------------------------------
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  passwordHash String
+  fullName     String
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  userRoles    UserRole[]
+  reviews      Review[]
+  auditLogs    AuditLog[]
+  activityLogs ActivityEvent[]
+  reports      Report[]
+
+  @@map("users")
+}
+
+model Role {
+  id          String     @id @default(uuid())
+  name        String     @unique // Admin, Analyst, BusinessUser, Customer
+  description String?
+  createdAt   DateTime   @default(now())
+
+  userRoles   UserRole[]
+
+  @@map("roles")
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String
+  roleId    String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@map("user_roles")
+}
+
+// -------------------------------------------------------------
+// 2. DOMAIN & PRODUCT MANAGEMENT
+// -------------------------------------------------------------
+
+model Domain {
+  id          String    @id @default(uuid())
+  name        String    @unique // Hotels, Restaurants, Movies, Electronics, E-commerce
+  code        String    @unique // hotels, restaurants, movies, electronics, ecommerce
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+  reviews     Review[]
+
+  @@map("domains")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  domainId    String
+  name        String
+  category    String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  domain      Domain   @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  reviews     Review[]
+
+  @@map("products")
+}
+
+// -------------------------------------------------------------
+// 3. REVIEWS MANAGEMENT (Core Entity)
+// -------------------------------------------------------------
+
+model Review {
+  id          String   @id @default(uuid())
+  customerId  String?  // Nullable if anonymous import
+  domainId    String
+  productId   String
+  reviewText  String
+  rating      Float    // 1.0 to 5.0
+  source      String   @default("manual") // manual, csv_import, web
+  reviewDate  DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  customer         User?            @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  domain           Domain           @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  product          Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  sentimentResult  SentimentResult?
+  reviewKeywords   ReviewKeyword[]
+  reviewTopics     ReviewTopic[]
+
+  @@map("reviews")
+}
+
+// -------------------------------------------------------------
+// 4. ANALYTICS RESULTS (ASTMA Syllabus Mapping)
+// -------------------------------------------------------------
+
+model SentimentResult {
+  id             String   @id @default(uuid())
+  reviewId       String   @unique
+  sentimentLabel String   // Positive, Neutral, Negative
+  sentimentScore Float    // Compound score (-1.0 to +1.0)
+  positiveProb   Float    @default(0.0)
+  neutralProb    Float    @default(0.0)
+  negativeProb   Float    @default(0.0)
+  analyzedAt     DateTime @default(now())
+
+  review         Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@map("sentiment_results")
+}
+
+model Keyword {
+  id             String          @id @default(uuid())
+  word           String          @unique
+  category       String?
+  createdAt      DateTime        @default(now())
+
+  reviewKeywords ReviewKeyword[]
+
+  @@map("keywords")
+}
+
+model ReviewKeyword {
+  id        String   @id @default(uuid())
+  reviewId  String
+  keywordId String
+  score     Float    @default(1.0) // TF-IDF score or frequency
+
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  keyword   Keyword  @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, keywordId])
+  @@map("review_keywords")
+}
+
+model Topic {
+  id           String        @id @default(uuid())
+  name         String        @unique // Quality, Service, Price, Delivery, Battery, Cleanliness
+  description  String?
+  createdAt    DateTime      @default(now())
+
+  reviewTopics ReviewTopic[]
+
+  @@map("topics")
+}
+
+model ReviewTopic {
+  id          String   @id @default(uuid())
+  reviewId    String
+  topicId     String
+  probability Float    @default(1.0)
+
+  review      Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, topicId])
+  @@map("review_topics")
+}
+
+model Cluster {
+  id           String   @id @default(uuid())
+  clusterNumber Int
+  name         String   // e.g. "Quality-related reviews"
+  description  String?
+  reviewCount  Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("clusters")
+}
+
+model AnalyticsJob {
+  id           String   @id @default(uuid())
+  jobType      String   // SENTIMENT, KEYWORDS, TOPICS, CLUSTERING, FULL_PIPELINE
+  status       String   @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  processedCount Int    @default(0)
+  errorMessage String?
+  startedAt    DateTime @default(now())
+  completedAt  DateTime?
+
+  @@map("analytics_jobs")
+}
+
+// -------------------------------------------------------------
+// 5. ENTERPRISE AUDIT & WEB ANALYTICS (ES & ASTMA Unit IV)
+// -------------------------------------------------------------
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  userEmail String?
+  action    String   // CREATE_REVIEW, DELETE_REVIEW, GENERATE_REPORT, LOGIN, etc.
+  resource  String   // Review, User, Domain, Report
+  ipAddress String?
+  status    String   @default("SUCCESS") // SUCCESS, FAILURE
+  timestamp DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}
+
+model ActivityEvent {
+  id        String   @id @default(uuid())
+  userId    String?
+  eventType String   // PAGE_VIEW, SEARCH, FILTER, EXPORT
+  path      String?
+  metadata  String?  // JSON string
+  timestamp DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("activity_events")
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  reportType  String   // EXECUTIVE_SUMMARY, DOMAIN_COMPARISON, SENTIMENT_TREND
+  fileFormat  String   @default("JSON") // JSON, CSV, PDF
+  createdById String
+  createdAt   DateTime @default(now())
+
+  createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@map("reports")
+}
