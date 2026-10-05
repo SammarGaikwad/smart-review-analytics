@@ -32,6 +32,7 @@ COPY package*.json ./
 RUN npm ci --only=production || npm install --production
 
 # Copy Prisma schema & client artifacts from builder
+COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/dist ./dist
