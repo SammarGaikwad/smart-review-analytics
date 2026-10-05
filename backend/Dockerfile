@@ -29,9 +29,10 @@ ENV NODE_ENV=production
 ENV PORT=5000
 
 COPY package*.json ./
-RUN npm ci --only=production || npm install --production
+RUN NODE_ENV=development npm ci || npm install
 
 # Copy Prisma schema & client artifacts from builder
+COPY tsconfig.json ./
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
