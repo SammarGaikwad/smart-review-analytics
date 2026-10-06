@@ -112,8 +112,8 @@ pipeline {
                 echo '==================================================='
                 echo 'STAGE 9: Verifying Container Health Endpoints'
                 echo '==================================================='
-                sh 'curl -f http://localhost:5001/api/health || exit 1'
-                sh 'curl -f http://localhost:8001/api/analytics/health || exit 1'
+                sh 'curl -f http://127.0.0.1:5001/api/health || exit 1'
+                sh 'curl -f http://127.0.0.1:8001/api/analytics/health || exit 1'
                 echo '✓ All container health checks PASSED.'
             }
         }
@@ -125,14 +125,14 @@ pipeline {
                 echo '==================================================='
                 sh '''
                     # 1. Domains & Products Check
-                    curl -f http://localhost:5001/api/domains || exit 1
-                    curl -f http://localhost:5001/api/products || exit 1
+                    curl -f http://127.0.0.1:5001/api/domains || exit 1
+                    curl -f http://127.0.0.1:5001/api/products || exit 1
 
                     # 2. Network Analytics Check
-                    curl -f http://localhost:5001/api/analytics/network || exit 1
+                    curl -f http://127.0.0.1:5001/api/analytics/network || exit 1
 
                     # 3. Auth Login Check
-                    curl -f -X POST http://localhost:5001/api/auth/login \
+                    curl -f -X POST http://127.0.0.1:5001/api/auth/login \
                          -H "Content-Type: application/json" \
                          -d '{"email":"admin@analytics.com","password":"password123"}' || exit 1
 
