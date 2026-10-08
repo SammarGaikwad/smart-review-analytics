@@ -6,7 +6,7 @@ from app.services.network_service import NetworkService
 
 class TemporalNetworkService:
     def __init__(self):
-        self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "datasets"))
+        self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "datasets"))
 
     def _calculate_betweenness(self, nodes, edges):
         adj = defaultdict(list)
