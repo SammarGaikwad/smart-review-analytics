@@ -7,7 +7,7 @@ from collections import defaultdict
 
 class WebAnalyticsService:
     def __init__(self):
-        self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "datasets"))
+        self.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "datasets"))
         self.crawled_pages = {}
         self.inverted_index = defaultdict(list)
         self.pagerank_scores = {}
