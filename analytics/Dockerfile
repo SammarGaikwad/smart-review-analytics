@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy python dependencies file
-COPY requirements.txt ./
+COPY analytics/requirements.txt ./
 
 # Install python packages
 RUN pip install --no-cache-dir --upgrade pip && \
@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 RUN python -c "import nltk; nltk.download('vader_lexicon'); nltk.download('punkt'); nltk.download('stopwords')"
 
 # Copy application files
-COPY app ./app
+COPY analytics/app ./app
 
 EXPOSE 8000
 
