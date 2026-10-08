@@ -29,6 +29,9 @@ class SentimentMLService:
 
     def _train_models(self):
         dataset_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "datasets", "sentiment_training.json")
+        if not os.path.exists(dataset_path):
+            dataset_path = os.path.join(os.path.dirname(__file__), "..", "..", "datasets", "sentiment_training.json")
+            
         try:
             with open(dataset_path, "r", encoding="utf-8") as f:
                 data = json.load(f)

@@ -19,8 +19,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Pre-download required NLTK tokenizers & VADER lexicon data
 RUN python -c "import nltk; nltk.download('vader_lexicon'); nltk.download('punkt'); nltk.download('stopwords')"
 
-# Copy application files
+# Copy application files and datasets
 COPY analytics/app ./app
+COPY datasets ./datasets
 
 EXPOSE 8000
 
