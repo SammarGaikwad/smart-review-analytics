@@ -50,7 +50,7 @@ def compare_keywords(request: CompareKeywordRequest):
 
 @router.post("/keywords/benchmark")
 def benchmark_keywords():
-    dataset_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "datasets", "keyword_benchmark.json")
+    dataset_path = os.path.join(os.path.dirname(__file__), "..", "..", "datasets", "keyword_benchmark.json")
     
     try:
         with open(dataset_path, "r", encoding="utf-8") as f:
