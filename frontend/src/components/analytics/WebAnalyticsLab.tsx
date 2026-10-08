@@ -92,7 +92,7 @@ export const WebAnalyticsLab: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <h4 className="font-semibold text-xs text-slate-600 mb-2 uppercase">Top Pages</h4>
-                  {Object.entries(clickstream.top_pages).map(([k, v]: any) => (
+                  {Object.entries(clickstream.top_pages || {}).map(([k, v]: any) => (
                     <div key={k} className="flex justify-between text-xs py-1 border-b border-slate-100 last:border-0">
                       <span>{k}</span><span className="font-bold">{v}</span>
                     </div>
@@ -100,7 +100,7 @@ export const WebAnalyticsLab: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-xs text-slate-600 mb-2 uppercase">Sources</h4>
-                  {Object.entries(clickstream.traffic_sources).map(([k, v]: any) => (
+                  {Object.entries(clickstream.traffic_sources || {}).map(([k, v]: any) => (
                     <div key={k} className="flex justify-between text-xs py-1 border-b border-slate-100 last:border-0">
                       <span className="capitalize">{k}</span><span className="font-bold">{v}</span>
                     </div>
@@ -155,7 +155,7 @@ export const WebAnalyticsLab: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-xs text-slate-600 mb-2 uppercase">Distribution</h4>
-                  {Object.entries(survey.distribution).sort((a,b) => Number(b[0]) - Number(a[0])).map(([k, v]: any) => (
+                  {Object.entries(survey.distribution || {}).sort((a,b) => Number(b[0]) - Number(a[0])).map(([k, v]: any) => (
                     <div key={k} className="flex justify-between items-center text-xs py-1">
                       <span className="text-slate-600">{k} Stars</span>
                       <div className="w-2/3 h-2 bg-slate-100 rounded overflow-hidden flex-1 mx-3">
