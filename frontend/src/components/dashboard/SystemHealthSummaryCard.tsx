@@ -15,6 +15,8 @@ export const SystemHealthSummaryCard: React.FC<SystemHealthSummaryCardProps> = (
   loading,
   onRefresh,
 }) => {
+  const isDbHealthy = backendStatus.details?.services?.database?.status === 'healthy';
+
   return (
     <div className="bg-slate-900 text-slate-100 rounded-xl p-5 border border-slate-800 shadow-md">
       <div className="flex items-center justify-between pb-4 border-b border-slate-800">
@@ -43,9 +45,8 @@ export const SystemHealthSummaryCard: React.FC<SystemHealthSummaryCardProps> = (
         <div className="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1.5">
           <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400">
             <span>Presentation Tier</span>
-            <span className="text-emerald-400 flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3" />
-              Online
+            <span className="text-blue-400 flex items-center gap-1">
+              Running
             </span>
           </div>
           <div className="text-sm font-bold text-white">React 18 + Vite</div>
@@ -82,13 +83,13 @@ export const SystemHealthSummaryCard: React.FC<SystemHealthSummaryCardProps> = (
         <div className="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1.5">
           <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400">
             <span>Database Layer</span>
-            <span className="text-emerald-400 flex items-center gap-1">
+            <span className={isDbHealthy ? 'text-emerald-400 flex items-center gap-1' : 'text-amber-400 flex items-center gap-1'}>
               <Database className="w-3 h-3" />
-              Connected
+              {isDbHealthy ? 'Connected' : 'Disconnected'}
             </span>
           </div>
           <div className="text-sm font-bold text-white">PostgreSQL + Prisma</div>
-          <div className="text-[10px] text-slate-400 font-mono">localhost:6009</div>
+          <div className="text-[10px] text-slate-400 font-mono">Production Database</div>
         </div>
       </div>
     </div>

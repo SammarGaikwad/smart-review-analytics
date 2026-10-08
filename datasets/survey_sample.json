@@ -1,0 +1,10 @@
+[
+  {"question": "How satisfied are you with the platform?", "response": "Very Satisfied", "rating": 5},
+  {"question": "How satisfied are you with the platform?", "response": "Satisfied", "rating": 4},
+  {"question": "How satisfied are you with the platform?", "response": "Neutral", "rating": 3},
+  {"question": "How satisfied are you with the platform?", "response": "Very Satisfied", "rating": 5},
+  {"question": "How satisfied are you with the platform?", "response": "Dissatisfied", "rating": 2},
+  {"question": "Would you recommend us to a friend?", "response": "Yes", "rating": 5},
+  {"question": "Would you recommend us to a friend?", "response": "Yes", "rating": 5},
+  {"question": "Would you recommend us to a friend?", "response": "No", "rating": 1}
+]

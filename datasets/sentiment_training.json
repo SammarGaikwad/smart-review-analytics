@@ -1,0 +1,28 @@
+[
+  {"text": "The product quality is excellent and delivery was fast. Highly recommend!", "label": "positive"},
+  {"text": "Amazing service, the staff was extremely friendly and helpful.", "label": "positive"},
+  {"text": "I love this laptop. The battery life is great and the screen is beautiful.", "label": "positive"},
+  {"text": "Best purchase I have made this year. Absolutely fantastic.", "label": "positive"},
+  {"text": "Very satisfied with my order. Everything was as expected.", "label": "positive"},
+  {"text": "The hotel room was very clean and comfortable.", "label": "positive"},
+  {"text": "The food at this restaurant is incredibly delicious.", "label": "positive"},
+  {"text": "Great value for the price. Would buy again.", "label": "positive"},
+  
+  {"text": "The product was damaged upon arrival and customer support was terrible.", "label": "negative"},
+  {"text": "Awful experience. The delivery was late and the item was broken.", "label": "negative"},
+  {"text": "I hate this phone. It is very slow and crashes constantly.", "label": "negative"},
+  {"text": "Waste of money. Do not buy this.", "label": "negative"},
+  {"text": "The hotel was dirty and the staff was rude.", "label": "negative"},
+  {"text": "Terrible food, it was cold and tasteless.", "label": "negative"},
+  {"text": "Worst customer service I have ever experienced.", "label": "negative"},
+  {"text": "The battery drains too quickly and it overheats.", "label": "negative"},
+  
+  {"text": "The product arrived yesterday and works as expected.", "label": "neutral"},
+  {"text": "It is an average phone. Nothing special, but it gets the job done.", "label": "neutral"},
+  {"text": "The hotel was okay. Not great, but not terrible either.", "label": "neutral"},
+  {"text": "Food was fine. Service was average.", "label": "neutral"},
+  {"text": "It works fine for the price.", "label": "neutral"},
+  {"text": "Standard delivery time. Item is as described.", "label": "neutral"},
+  {"text": "I have no strong feelings about this purchase.", "label": "neutral"},
+  {"text": "It is exactly what it says on the box.", "label": "neutral"}
+]

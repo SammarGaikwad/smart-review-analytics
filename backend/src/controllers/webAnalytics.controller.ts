@@ -1,66 +1,75 @@
-import { Request, Response } from 'express';
-import { getWebAnalytics, WebAnalyticsParams } from '../services/webAnalytics.service';
+import { Request, Response } from "express";
+import * as WebAnalyticsService from "../services/webAnalytics.service";
 
-export const getWebAnalyticsHandler = async (req: Request, res: Response) => {
-  try {
-    const { period, domainId, source, startDate, endDate } = req.query;
-
-    // Validate period parameter
-    let validatedPeriod: 'day' | 'week' | 'month' = 'day';
-    if (period) {
-      const periodStr = String(period).toLowerCase();
-      if (!['day', 'week', 'month'].includes(periodStr)) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid period parameter. Must be one of: 'day', 'week', 'month'",
-        });
-      }
-      validatedPeriod = periodStr as 'day' | 'week' | 'month';
+export const getClickstream = async (req: Request, res: Response) => {
+    try {
+        const result = await WebAnalyticsService.getClickstreamAnalytics();
+        res.status(200).json({ success: true, data: result });
+    } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
     }
+};
 
-    // Validate startDate format
-    if (startDate) {
-      const start = new Date(String(startDate));
-      if (isNaN(start.getTime())) {
-        return res.status(400).json({
-          success: false,
-          message: 'Invalid startDate parameter. Must be a valid date string.',
-        });
-      }
+export const getAbTest = async (req: Request, res: Response) => {
+    try {
+        const result = await WebAnalyticsService.getAbTestResults();
+        res.status(200).json({ success: true, data: result });
+    } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
     }
+};
 
-    // Validate endDate format
-    if (endDate) {
-      const end = new Date(String(endDate));
-      if (isNaN(end.getTime())) {
-        return res.status(400).json({
-          success: false,
-          message: 'Invalid endDate parameter. Must be a valid date string.',
-        });
-      }
+export const getSurvey = async (req: Request, res: Response) => {
+    try {
+        const result = await WebAnalyticsService.getSurveyAnalytics();
+        res.status(200).json({ success: true, data: result });
+    } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
     }
+};
 
-    const params: WebAnalyticsParams = {
-      period: validatedPeriod,
-      domainId: domainId ? String(domainId) : undefined,
-      source: source ? String(source) : undefined,
-      startDate: startDate ? String(startDate) : undefined,
-      endDate: endDate ? String(endDate) : undefined,
-    };
+export const crawl = async (req: Request, res: Response) => {
+    try {
+        const result = await WebAnalyticsService.crawlPages();
+        res.status(200).json({ success: true, data: result });
+    } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
 
-    const analyticsData = await getWebAnalytics(params);
+export const getIndex = async (req: Request, res: Response) => {
+    try {
+        const result = await WebAnalyticsService.getIndex();
+        res.status(200).json({ success: true, data: result });
+    } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
 
-    res.status(200).json({
-      success: true,
-      message: 'Web analytics fetched successfully',
-      data: analyticsData,
-    });
-  } catch (error: any) {
-    console.error('Web Analytics handler error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to retrieve web analytics',
-      error: error.message,
-    });
-  }
+export const getRanking = async (req: Request, res: Response) => {
+    try {
+        const result = await WebAnalyticsService.getRanking();
+        res.status(200).json({ success: true, data: result });
+    } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+export const getSeo = async (req: Request, res: Response) => {
+    try {
+        const result = await WebAnalyticsService.getSeoAnalysis();
+        res.status(200).json({ success: true, data: result });
+    } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+export const search = async (req: Request, res: Response) => {
+    try {
+        const { query } = req.body;
+        const result = await WebAnalyticsService.searchWeb(query);
+        res.status(200).json({ success: true, data: result });
+    } catch (error: any) {
+        res.status(500).json({ success: false, error: error.message });
+    }
 };

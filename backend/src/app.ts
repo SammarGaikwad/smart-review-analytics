@@ -15,14 +15,22 @@ import networkRoutes from "./routes/network.routes";
 import authRoutes from "./routes/auth.routes";
 import auditRoutes from "./routes/audit.routes";
 import userRoutes from "./routes/userManagement.routes";
+import customerRoutes from "./routes/customer.routes";
 
 dotenv.config();
 
 const app: Application = express();
 
 // Middleware
+const isProduction = process.env.NODE_ENV === 'production';
+if (isProduction && !process.env.CORS_ORIGIN) {
+  console.error("FATAL: CORS_ORIGIN environment variable is missing in production.");
+  process.exit(1);
+}
+const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: corsOrigin,
   credentials: true
 }));
 app.use(express.json());
@@ -41,6 +49,7 @@ app.use("/api/clustering", clusteringRoutes);
 app.use("/api/analytics/network", networkRoutes);
 app.use("/api/analytics", webAnalyticsRoutes);
 app.use("/api/analytics", activityRoutes);
+app.use("/api/customers", customerRoutes);
 
 // Health Check API
 app.use('/api/health', healthRoutes);

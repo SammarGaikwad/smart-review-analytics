@@ -13,6 +13,7 @@ import { ProductsPage } from './pages/ProductsPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { UsersPage } from './pages/UsersPage';
 import { AuditLogsPage } from './pages/AuditLogsPage';
+import { CustomerInsightsPage } from './pages/CustomerInsightsPage';
 import { SystemStatusPage } from './pages/SystemStatusPage';
 import { SettingsPage } from './pages/SettingsPage';
 
@@ -46,6 +47,11 @@ export default function App() {
             />
             <Route path="domains" element={<DomainsPage />} />
             <Route path="products" element={<ProductsPage />} />
+            <Route path="customers" element={
+              <RoleRoute requiredRoles={['Admin', 'Analyst']}>
+                <CustomerInsightsPage />
+              </RoleRoute>
+            } />
             <Route path="reports" element={<ReportsPage />} />
             <Route
               path="users"

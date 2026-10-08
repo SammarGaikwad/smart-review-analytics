@@ -57,3 +57,46 @@ export const analyzeReviewSentiment = async (reviewId: string) => {
 
   return sentimentResult;
 };
+
+export const analyzeTextSentiment = async (text: string) => {
+  const response = await axios.post(
+    `${ANALYTICS_URL}/api/analytics/sentiment`,
+    { text }
+  );
+
+  const result = response.data?.data;
+  if (!result) {
+    throw new Error("Invalid response from analytics service");
+  }
+
+  return {
+    id: 'live-test',
+    reviewId: 'none',
+    sentimentLabel: result.sentiment.charAt(0).toUpperCase() + result.sentiment.slice(1),
+    sentimentScore: result.score,
+    positiveProb: result.probabilities.positive,
+    neutralProb: result.probabilities.neutral,
+    negativeProb: result.probabilities.negative,
+    analyzedAt: new Date().toISOString()
+  };
+};
+
+export const predictSentiment = async (text: string, model: string) => {
+  const response = await axios.post(`${ANALYTICS_URL}/api/analytics/sentiment/predict`, {
+    text,
+    model,
+  });
+  return response.data?.data;
+};
+
+export const compareSentimentModels = async (text: string) => {
+  const response = await axios.post(`${ANALYTICS_URL}/api/analytics/sentiment/predict/compare`, {
+    text,
+  });
+  return response.data?.data;
+};
+
+export const getSentimentModelEvaluation = async () => {
+  const response = await axios.get(`${ANALYTICS_URL}/api/analytics/sentiment/models/evaluation`);
+  return response.data?.data;
+};

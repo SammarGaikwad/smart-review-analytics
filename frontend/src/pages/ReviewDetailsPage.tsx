@@ -71,8 +71,8 @@ export const ReviewDetailsPage: React.FC = () => {
   if (error || !review) return <ErrorState message={error || 'Review not found'} onRetry={loadReview} />;
 
   const sr = review.sentimentResult;
-  const posProb = sr?.positiveProb ?? 0.548;
-  const neuProb = sr?.neutralProb ?? 0.452;
+  const posProb = sr?.positiveProb ?? 0;
+  const neuProb = sr?.neutralProb ?? 0;
   const negProb = sr?.negativeProb ?? 0;
 
   return (
@@ -245,8 +245,8 @@ export const ReviewDetailsPage: React.FC = () => {
                 Classified Sentiment
               </span>
               <SentimentBadge
-                sentiment={sr?.sentimentLabel || 'Positive'}
-                score={sr?.sentimentScore || 0.9022}
+                sentiment={sr?.sentimentLabel || 'Unknown'}
+                score={sr?.sentimentScore || 0}
                 size="md"
               />
 
@@ -254,7 +254,7 @@ export const ReviewDetailsPage: React.FC = () => {
                 <div>
                   <span className="text-[10px] text-slate-400 block">Compound Score</span>
                   <span className="text-sm font-bold font-mono text-white">
-                    {sr?.sentimentScore !== undefined ? sr.sentimentScore.toFixed(4) : '0.9022'}
+                    {sr?.sentimentScore !== undefined ? sr.sentimentScore.toFixed(4) : '0.0000'}
                   </span>
                 </div>
                 <div>
@@ -262,7 +262,7 @@ export const ReviewDetailsPage: React.FC = () => {
                   <span className="text-sm font-bold font-mono text-emerald-400">
                     {sr?.sentimentScore !== undefined
                       ? `${(Math.abs(sr.sentimentScore) * 100).toFixed(1)}%`
-                      : '90.2%'}
+                      : '0.0%'}
                   </span>
                 </div>
               </div>

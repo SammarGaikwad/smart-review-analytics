@@ -12,7 +12,7 @@ import { ErrorState } from '../components/common/ErrorState';
 
 import { getDomains } from '../api/domains';
 import { getReviews } from '../api/reviews';
-import { checkBackendHealth, checkAnalyticsHealth } from '../api/health';
+import { checkBackendHealth } from '../api/health';
 import { Domain, Review, ServiceHealthStatus, KPIStats, DomainPerformanceData } from '../types';
 import { MessageSquare, ThumbsUp, ThumbsDown, Minus, Star } from 'lucide-react';
 
@@ -47,12 +47,16 @@ export const DashboardPage: React.FC = () => {
 
   const loadHealth = async () => {
     setHealthLoading(true);
-    const [bHealth, aHealth] = await Promise.all([
-      checkBackendHealth(),
-      checkAnalyticsHealth(),
-    ]);
+    const bHealth = await checkBackendHealth();
     setBackendStatus(bHealth);
-    setAnalyticsStatus(aHealth);
+    
+    const isAnalyticsHealthy = bHealth.details?.services?.analytics?.status === 'healthy';
+    setAnalyticsStatus({
+      online: isAnalyticsHealthy,
+      message: isAnalyticsHealthy ? 'Python FastAPI Engine Online' : 'Analytics offline',
+      details: bHealth.details?.services?.analytics
+    });
+    
     setHealthLoading(false);
   };
 
@@ -77,6 +81,7 @@ export const DashboardPage: React.FC = () => {
 
   const positivePercent = totalReviews > 0 ? ((positiveReviews / totalReviews) * 100).toFixed(1) : '0.0';
   const negativePercent = totalReviews > 0 ? ((negativeReviews / totalReviews) * 100).toFixed(1) : '0.0';
+  const neutralPercent = totalReviews > 0 ? ((neutralReviews / totalReviews) * 100).toFixed(1) : '0.0';
 
   // Compute Domain Performance data for charts
   const domainPerformance: DomainPerformanceData[] = domains.map((domain) => {
@@ -90,8 +95,8 @@ export const DashboardPage: React.FC = () => {
       domainName: domain.name,
       code: domain.code,
       reviewCount: count || domain._count?.reviews || 0,
-      averageRating: avgRating || 4.2,
-      positivePercent: posPercent || 70,
+      averageRating: avgRating || 0,
+      positivePercent: posPercent || 0,
     };
   });
 
@@ -120,7 +125,6 @@ export const DashboardPage: React.FC = () => {
             <StatCard
               title="Total Reviews"
               value={totalReviews}
-              trend={{ value: '+12.5%', isPositive: true, label: 'vs previous period' }}
               icon={MessageSquare}
               colorTheme="indigo"
             />
@@ -141,7 +145,7 @@ export const DashboardPage: React.FC = () => {
             <StatCard
               title="Neutral Reviews"
               value={neutralReviews}
-              subtitle="0.0% variance"
+              subtitle={`${neutralPercent}% of total`}
               icon={Minus}
               colorTheme="slate"
             />

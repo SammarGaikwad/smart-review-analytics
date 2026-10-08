@@ -4,10 +4,10 @@ import { Settings, Save, Server, Globe, Database, Shield } from 'lucide-react';
 
 export const SettingsPage: React.FC = () => {
   const [apiBaseUrl, setApiBaseUrl] = useState<string>(
-    import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
+    import.meta.env.VITE_API_URL || ''
   );
   const [analyticsBaseUrl, setAnalyticsBaseUrl] = useState<string>(
-    import.meta.env.VITE_ANALYTICS_BASE_URL || 'http://localhost:8000'
+    import.meta.env.VITE_ANALYTICS_URL || ''
   );
   const [theme, setTheme] = useState<string>('light');
   const [saved, setSaved] = useState<boolean>(false);
@@ -51,7 +51,7 @@ export const SettingsPage: React.FC = () => {
                 onChange={(e) => setApiBaseUrl(e.target.value)}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:border-indigo-500 font-mono"
               />
-              <p className="text-[11px] text-slate-400 mt-1">Default Node.js backend port is 5000</p>
+              <p className="text-[11px] text-slate-400 mt-1">Configured via VITE_API_URL environment variable</p>
             </div>
 
             <div>
@@ -64,7 +64,7 @@ export const SettingsPage: React.FC = () => {
                 onChange={(e) => setAnalyticsBaseUrl(e.target.value)}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:border-indigo-500 font-mono"
               />
-              <p className="text-[11px] text-slate-400 mt-1">Default Python VADER engine port is 8000</p>
+              <p className="text-[11px] text-slate-400 mt-1">Configured via VITE_ANALYTICS_URL environment variable</p>
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PageHeader } from '../components/common/PageHeader';
 import { StatusBadge } from '../components/common/StatusBadge';
-import { checkBackendHealth, checkAnalyticsHealth } from '../api/health';
+import { checkBackendHealth } from '../api/health';
 import { ServiceHealthStatus } from '../types';
 import {
   Server,
@@ -25,17 +25,23 @@ export const SystemStatusPage: React.FC = () => {
 
   const checkAllServices = async () => {
     setLoading(true);
-    const [bHealth, aHealth] = await Promise.all([
-      checkBackendHealth(),
-      checkAnalyticsHealth(),
-    ]);
+    const bHealth = await checkBackendHealth();
     setBackendStatus(bHealth);
-    setAnalyticsStatus(aHealth);
+    
+    const isAnalyticsOnline = bHealth.details?.services?.analytics?.status === 'healthy';
+    setAnalyticsStatus({
+      online: isAnalyticsOnline,
+      message: isAnalyticsOnline ? 'Python FastAPI Engine Online (VADER NLP)' : 'Analytics engine offline',
+      details: bHealth.details?.services?.analytics
+    });
+    
     setLoading(false);
   };
 
   useEffect(() => {
     checkAllServices();
+    const interval = setInterval(checkAllServices, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -88,8 +94,12 @@ export const SystemStatusPage: React.FC = () => {
             <p className="text-xs text-slate-500">Node.js Express TypeScript</p>
           </div>
           <div className="text-[11px] font-mono text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-            <div>Port: 5000</div>
-            <div>GET /api/health</div>
+            <div className="flex justify-between"><span>Port: 5000</span><span>GET /api/health</span></div>
+            {backendStatus.details?.services?.backend?.uptime !== undefined && (
+              <div className="mt-1 pt-1 border-t border-slate-200">
+                Uptime: {Math.floor(backendStatus.details.services.backend.uptime)}s
+              </div>
+            )}
           </div>
         </div>
 
@@ -99,15 +109,19 @@ export const SystemStatusPage: React.FC = () => {
             <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
               <Cpu className="w-5 h-5" />
             </div>
-            <StatusBadge status={analyticsStatus.online ? 'Online' : 'Offline'} />
+            <StatusBadge status={backendStatus.details?.services?.analytics?.status === 'healthy' ? 'Online' : 'Offline'} />
           </div>
           <div>
             <h3 className="text-sm font-bold text-slate-900">Analytics Engine</h3>
             <p className="text-xs text-slate-500">Python FastAPI + VADER NLP</p>
           </div>
           <div className="text-[11px] font-mono text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-            <div>Port: 8000</div>
-            <div>GET /analytics-api/health</div>
+            <div className="flex justify-between"><span>Port: 8000</span><span>GET /analytics-api/health</span></div>
+            {backendStatus.details?.services?.analytics?.responseTimeMs !== undefined && (
+              <div className="mt-1 pt-1 border-t border-slate-200">
+                Backend ↔ Analytics Ping: {backendStatus.details.services.analytics.responseTimeMs}ms
+              </div>
+            )}
           </div>
         </div>
 
@@ -117,15 +131,19 @@ export const SystemStatusPage: React.FC = () => {
             <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
               <Database className="w-5 h-5" />
             </div>
-            <StatusBadge status="Connected" />
+            <StatusBadge status={backendStatus.details?.services?.database?.status === 'healthy' ? 'Connected' : 'Degraded'} />
           </div>
           <div>
             <h3 className="text-sm font-bold text-slate-900">Database Layer</h3>
             <p className="text-xs text-slate-500">PostgreSQL + Prisma ORM</p>
           </div>
           <div className="text-[11px] font-mono text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-            <div>Port: 6009</div>
-            <div>Prisma Client Active</div>
+            <div className="flex justify-between"><span>Port: 6009</span><span>Prisma Client</span></div>
+            {backendStatus.details?.services?.database?.responseTimeMs !== undefined && (
+              <div className="mt-1 pt-1 border-t border-slate-200">
+                Query Latency: {backendStatus.details.services.database.responseTimeMs}ms
+              </div>
+            )}
           </div>
         </div>
 

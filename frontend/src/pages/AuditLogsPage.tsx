@@ -125,7 +125,7 @@ export const AuditLogsPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-4 py-3.5 text-right font-mono text-slate-400 text-[11px]">
-                      {log.ipAddress || '127.0.0.1'}
+                      {log.ipAddress || '—'}
                     </td>
                   </tr>
                 ))}

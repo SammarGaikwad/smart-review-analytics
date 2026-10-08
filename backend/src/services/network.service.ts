@@ -192,3 +192,8 @@ export const getNetworkAnalytics = async (): Promise<NetworkAnalyticsResult> => 
 
   return resultData;
 };
+
+export const getTemporalNetworkAnalytics = async (): Promise<any> => {
+  const response = await axios.get(`${ANALYTICS_URL}/api/analytics/network/temporal`);
+  return response.data?.data;
+};

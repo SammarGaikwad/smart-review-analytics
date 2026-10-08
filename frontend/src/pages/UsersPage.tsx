@@ -148,11 +148,12 @@ export const UsersPage: React.FC = () => {
             onChange={(e) => setRoleFilter(e.target.value)}
             className="px-3 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:outline-none"
           >
-            <option value="ALL">All Roles (Admin, Analyst, BusinessUser, Customer)</option>
-            <option value="Admin">Admin</option>
-            <option value="Analyst">Analyst</option>
-            <option value="BusinessUser">BusinessUser</option>
-            <option value="Customer">Customer</option>
+            <option value="ALL">All Roles</option>
+            {roles.map((r) => (
+              <option key={r.id} value={r.name}>
+                {r.name}
+              </option>
+            ))}
           </select>
         </div>
 

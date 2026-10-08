@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { analyzeReviewKeywords } from '../services/keyword.service';
+import { analyzeReviewKeywords, compareKeywords, benchmarkKeywords } from '../services/keyword.service';
 
 export const analyzeKeywords = async (req: Request, res: Response) => {
   try {
@@ -34,5 +34,24 @@ export const analyzeKeywords = async (req: Request, res: Response) => {
       message: 'Failed to extract keywords',
       error: error.message,
     });
+  }
+};
+
+export const compareKeywordsEndpoint = async (req: Request, res: Response) => {
+  try {
+    const { text, referenceKeywords, topK } = req.body;
+    const result = await compareKeywords(text, referenceKeywords || [], topK || 10);
+    res.status(200).json({ success: true, data: result });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const benchmarkKeywordsEndpoint = async (req: Request, res: Response) => {
+  try {
+    const result = await benchmarkKeywords();
+    res.status(200).json({ success: true, data: result });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
   }
 };

@@ -1,6 +1,9 @@
 // Centralized API Client Configuration for Smart Review Analytics Platform
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+if (!import.meta.env.VITE_API_URL) {
+  throw new Error('FATAL: VITE_API_URL environment variable is missing. Please configure it in your environment (e.g., .env).');
+}
+export const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export async function apiFetch<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem('token');

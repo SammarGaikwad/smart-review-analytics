@@ -6,12 +6,14 @@ import { EmptyState } from '../components/common/EmptyState';
 import { ErrorState } from '../components/common/ErrorState';
 import { getProducts } from '../api/products';
 import { getDomains } from '../api/domains';
-import { Product, Domain } from '../types';
+import { getReviews } from '../api/reviews';
+import { Product, Domain, Review } from '../types';
 import { Search, Package, Globe, Plus, MessageSquare } from 'lucide-react';
 
 export const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [domains, setDomains] = useState<Domain[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,9 +24,10 @@ export const ProductsPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const [pData, dData] = await Promise.all([getProducts(), getDomains()]);
+      const [pData, dData, rData] = await Promise.all([getProducts(), getDomains(), getReviews()]);
       setProducts(pData);
       setDomains(dData);
+      setReviews(rData);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch product catalog.');
     } finally {
@@ -104,7 +107,14 @@ export const ProductsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {filteredProducts.map((product) => (
+                {filteredProducts.map((product) => {
+                  const productReviews = reviews.filter((r) => r.productId === product.id);
+                  const count = productReviews.length;
+                  const avgRating = count > 0 
+                    ? productReviews.reduce((acc, r) => acc + (r.rating ?? 0), 0) / count 
+                    : null;
+                  
+                  return (
                   <tr key={product.id} className="hover:bg-slate-50/80 transition">
                     <td className="px-4 py-3.5 font-bold text-slate-900 flex items-center gap-2">
                       <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded">
@@ -121,13 +131,18 @@ export const ProductsPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-4 py-3.5 text-slate-700 font-semibold">
-                      {product._count?.reviews || product.reviews?.length || 4} reviews
+                      {product._count?.reviews ?? product.reviews?.length ?? count ?? 0} reviews
                     </td>
                     <td className="px-4 py-3.5">
-                      <RatingStars rating={4.2} size="sm" showNumber />
+                      {avgRating !== null ? (
+                        <RatingStars rating={Number(avgRating.toFixed(2))} size="sm" showNumber />
+                      ) : (
+                        <span className="text-slate-400 font-medium">—</span>
+                      )}
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

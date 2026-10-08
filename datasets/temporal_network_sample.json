@@ -1,0 +1,64 @@
+[
+  {
+    "period": "2026-01",
+    "nodes": [
+      {"id": "CustomerA", "type": "customer", "label": "Alice"},
+      {"id": "CustomerB", "type": "customer", "label": "Bob"},
+      {"id": "ProductX", "type": "product", "label": "Laptop Pro"},
+      {"id": "ProductY", "type": "product", "label": "Smartphone"}
+    ],
+    "edges": [
+      {"source": "CustomerA", "target": "ProductX", "type": "reviewed"},
+      {"source": "CustomerB", "target": "ProductX", "type": "reviewed"},
+      {"source": "CustomerB", "target": "ProductY", "type": "reviewed"}
+    ],
+    "semantic": [
+      {"topic": "Quality", "products": ["ProductX", "ProductY"]},
+      {"topic": "Battery", "products": ["ProductX"]}
+    ]
+  },
+  {
+    "period": "2026-02",
+    "nodes": [
+      {"id": "CustomerA", "type": "customer", "label": "Alice"},
+      {"id": "CustomerB", "type": "customer", "label": "Bob"},
+      {"id": "CustomerC", "type": "customer", "label": "Charlie"},
+      {"id": "ProductX", "type": "product", "label": "Laptop Pro"},
+      {"id": "ProductY", "type": "product", "label": "Smartphone"},
+      {"id": "ProductZ", "type": "product", "label": "Tablet"}
+    ],
+    "edges": [
+      {"source": "CustomerA", "target": "ProductX", "type": "reviewed"},
+      {"source": "CustomerB", "target": "ProductX", "type": "reviewed"},
+      {"source": "CustomerB", "target": "ProductY", "type": "reviewed"},
+      {"source": "CustomerC", "target": "ProductY", "type": "reviewed"},
+      {"source": "CustomerC", "target": "ProductZ", "type": "reviewed"}
+    ],
+    "semantic": [
+      {"topic": "Quality", "products": ["ProductX", "ProductY", "ProductZ"]},
+      {"topic": "Battery", "products": ["ProductX", "ProductZ"]}
+    ]
+  },
+  {
+    "period": "2026-03",
+    "nodes": [
+      {"id": "CustomerB", "type": "customer", "label": "Bob"},
+      {"id": "CustomerC", "type": "customer", "label": "Charlie"},
+      {"id": "CustomerD", "type": "customer", "label": "Dave"},
+      {"id": "ProductX", "type": "product", "label": "Laptop Pro"},
+      {"id": "ProductY", "type": "product", "label": "Smartphone"},
+      {"id": "ProductZ", "type": "product", "label": "Tablet"}
+    ],
+    "edges": [
+      {"source": "CustomerB", "target": "ProductY", "type": "reviewed"},
+      {"source": "CustomerC", "target": "ProductY", "type": "reviewed"},
+      {"source": "CustomerC", "target": "ProductZ", "type": "reviewed"},
+      {"source": "CustomerD", "target": "ProductZ", "type": "reviewed"},
+      {"source": "CustomerD", "target": "ProductX", "type": "reviewed"}
+    ],
+    "semantic": [
+      {"topic": "Quality", "products": ["ProductY", "ProductZ"]},
+      {"topic": "Service", "products": ["ProductX", "ProductZ"]}
+    ]
+  }
+]

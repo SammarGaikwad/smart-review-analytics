@@ -1,0 +1,9 @@
+[
+  {"sessionId": "s001", "userId": "u1", "timestamp": "2026-10-01T10:00:00", "page": "/dashboard", "event": "page_view", "source": "direct", "duration": 45},
+  {"sessionId": "s001", "userId": "u1", "timestamp": "2026-10-01T10:00:45", "page": "/reviews", "event": "page_view", "source": "internal", "duration": 120},
+  {"sessionId": "s001", "userId": "u1", "timestamp": "2026-10-01T10:02:45", "page": "/analytics", "event": "page_view", "source": "internal", "duration": 60},
+  {"sessionId": "s002", "userId": "u2", "timestamp": "2026-10-01T11:15:00", "page": "/dashboard", "event": "page_view", "source": "organic", "duration": 10},
+  {"sessionId": "s003", "userId": "u3", "timestamp": "2026-10-01T14:30:00", "page": "/products", "event": "page_view", "source": "referral", "duration": 85},
+  {"sessionId": "s003", "userId": "u3", "timestamp": "2026-10-01T14:31:25", "page": "/reviews", "event": "page_view", "source": "internal", "duration": 150},
+  {"sessionId": "s004", "userId": "u4", "timestamp": "2026-10-02T09:00:00", "page": "/dashboard", "event": "page_view", "source": "direct", "duration": 30}
+]

@@ -30,6 +30,15 @@ export const DomainPerformanceChart: React.FC<DomainPerformanceChartProps> = ({ 
     reviewCount: d.reviewCount,
   }));
 
+  const validDomains = data.filter((d) => d.reviewCount > 0);
+  const topDomain = validDomains.length > 0 
+    ? [...validDomains].sort((a, b) => {
+        if (b.averageRating !== a.averageRating) return b.averageRating - a.averageRating;
+        if (b.positivePercent !== a.positivePercent) return b.positivePercent - a.positivePercent;
+        return b.reviewCount - a.reviewCount;
+      })[0]
+    : null;
+
   return (
     <div className="bg-white border border-slate-200/80 rounded-xl p-5 shadow-sm flex flex-col justify-between h-full">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
@@ -112,7 +121,7 @@ export const DomainPerformanceChart: React.FC<DomainPerformanceChartProps> = ({ 
       </div>
 
       <div className="text-[11px] text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-100 flex items-center justify-between">
-        <span>Top Performing Domain: <strong className="text-slate-800 font-semibold">{data[0]?.domainName || 'Hotels'}</strong></span>
+        <span>Top Performing Domain: <strong className="text-slate-800 font-semibold">{topDomain ? topDomain.domainName : 'No reviewed domains'}</strong></span>
         <span className="font-mono text-[10px] bg-slate-200 px-1.5 py-0.5 rounded text-slate-700">ES Analytics Aggregation</span>
       </div>
     </div>

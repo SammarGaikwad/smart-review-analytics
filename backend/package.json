@@ -10,7 +10,9 @@
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:seed": "ts-node prisma/seed.ts",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "test:customer-insights": "tsc --project tests/tsconfig.json --noEmit",
+    "test:system-health": "ts-node tests/test_system_health.ts"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

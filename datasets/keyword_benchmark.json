@@ -1,0 +1,38 @@
+[
+  {
+    "id": "doc-001",
+    "text": "The customer service at this hotel was absolutely fantastic. However, the room quality and the air conditioning were poor. The food in the restaurant was okay but overpriced.",
+    "referenceKeywords": [
+      "customer service",
+      "room quality",
+      "air conditioning",
+      "food",
+      "restaurant",
+      "overpriced"
+    ]
+  },
+  {
+    "id": "doc-002",
+    "text": "Battery life on this laptop is excellent. The screen resolution is stunning and the keyboard is very comfortable. I highly recommend it for gaming and programming.",
+    "referenceKeywords": [
+      "battery life",
+      "laptop",
+      "screen resolution",
+      "keyboard",
+      "gaming",
+      "programming"
+    ]
+  },
+  {
+    "id": "doc-003",
+    "text": "The delivery was delayed by three days. When the package finally arrived, the product was damaged. I contacted support but they were unresponsive.",
+    "referenceKeywords": [
+      "delivery",
+      "package",
+      "product",
+      "damaged",
+      "support",
+      "unresponsive"
+    ]
+  }
+]

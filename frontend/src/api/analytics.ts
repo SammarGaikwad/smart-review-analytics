@@ -11,6 +11,11 @@ export async function getNetworkAnalytics(): Promise<NetworkAnalyticsResult> {
   return res.data;
 }
 
+export async function getTemporalNetworkAnalytics(): Promise<any> {
+  const res = await apiClient.get('/analytics/network/temporal');
+  return res.data;
+}
+
 export async function analyzeSentiment(reviewId: string) {
   const res = await apiClient.post(`/sentiment/${reviewId}/analyze`);
   return res.data;
@@ -18,6 +23,16 @@ export async function analyzeSentiment(reviewId: string) {
 
 export async function analyzeKeywords(reviewId: string) {
   const res = await apiClient.post(`/keywords/${reviewId}/analyze`);
+  return res.data;
+}
+
+export async function compareKeywords(text: string, referenceKeywords: string[], topK: number = 10) {
+  const res = await apiClient.post('/keywords/compare', { text, referenceKeywords, topK });
+  return res.data;
+}
+
+export async function benchmarkKeywords() {
+  const res = await apiClient.post('/keywords/benchmark');
   return res.data;
 }
 

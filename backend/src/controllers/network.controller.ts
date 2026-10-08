@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getNetworkAnalytics } from '../services/network.service';
+import { getNetworkAnalytics, getTemporalNetworkAnalytics } from '../services/network.service';
 
 export const analyzeNetwork = async (req: Request, res: Response) => {
   try {
@@ -23,6 +23,24 @@ export const analyzeNetwork = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: 'Failed to compute network analytics',
+      error: error.message,
+    });
+  }
+};
+
+export const getTemporalNetwork = async (req: Request, res: Response) => {
+  try {
+    const result = await getTemporalNetworkAnalytics();
+    res.status(200).json({
+      success: true,
+      message: 'Temporal network fetched successfully',
+      data: result,
+    });
+  } catch (error: any) {
+    console.error('Temporal network controller error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to compute temporal network',
       error: error.message,
     });
   }

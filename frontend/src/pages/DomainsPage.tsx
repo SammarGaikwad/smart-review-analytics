@@ -5,11 +5,13 @@ import { ErrorState } from '../components/common/ErrorState';
 import { Modal } from '../components/common/Modal';
 import { RatingStars } from '../components/common/RatingStars';
 import { getDomains, getProductsByDomain } from '../api/domains';
-import { Domain, Product } from '../types';
+import { getReviews } from '../api/reviews';
+import { Domain, Product, Review } from '../types';
 import { Globe, Package, MessageSquare, Star, ArrowRight, ExternalLink } from 'lucide-react';
 
 export const DomainsPage: React.FC = () => {
   const [domains, setDomains] = useState<Domain[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,8 +24,12 @@ export const DomainsPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getDomains();
-      setDomains(data);
+      const [domainsData, reviewsData] = await Promise.all([
+        getDomains(),
+        getReviews(),
+      ]);
+      setDomains(domainsData);
+      setReviews(reviewsData);
     } catch (err: any) {
       setError(err.message || 'Unable to fetch domains.');
     } finally {
@@ -62,8 +68,22 @@ export const DomainsPage: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {domains.map((domain) => {
-            const productCount = domain.products?.length || domain._count?.products || 3;
-            const reviewCount = domain._count?.reviews || 12;
+            const productCount = domain.products?.length ?? domain._count?.products ?? 0;
+            const reviewCount = domain._count?.reviews ?? 0;
+            
+            const domainReviews = reviews.filter((r) => r.domainId === domain.id || r.domain?.code === domain.code);
+            
+            let avgRatingDisplay = "—";
+            let positiveSentimentDisplay = "—";
+
+            if (reviewCount > 0 && domainReviews.length > 0) {
+              const totalRating = domainReviews.reduce((sum, r) => sum + (r.rating || 0), 0);
+              avgRatingDisplay = (totalRating / domainReviews.length).toFixed(1);
+
+              const positiveReviews = domainReviews.filter((r) => r.sentimentResult?.sentimentLabel?.toLowerCase() === 'positive').length;
+              const positivePercent = Math.round((positiveReviews / domainReviews.length) * 100);
+              positiveSentimentDisplay = `${positivePercent}% Positive Sentiment`;
+            }
 
             return (
               <div
@@ -100,14 +120,18 @@ export const DomainsPage: React.FC = () => {
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-400 block font-semibold">Avg Rating</span>
-                      <span className="text-sm font-bold text-indigo-600">4.3</span>
+                      <span className="text-sm font-bold text-indigo-600">{avgRatingDisplay}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                    78% Positive Sentiment
+                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded border ${
+                    positiveSentimentDisplay === "—"
+                      ? "text-slate-500 bg-slate-50 border-slate-200"
+                      : "text-emerald-600 bg-emerald-50 border-emerald-200"
+                  }`}>
+                    {positiveSentimentDisplay}
                   </span>
 
                   <button
@@ -138,18 +162,30 @@ export const DomainsPage: React.FC = () => {
         ) : (
           <div className="space-y-3">
             <div className="divide-y divide-slate-100 text-xs">
-              {modalProducts.map((prod) => (
-                <div key={prod.id} className="py-3 flex items-center justify-between">
-                  <div>
-                    <h4 className="font-bold text-slate-900">{prod.name}</h4>
-                    <p className="text-[11px] text-slate-500">{prod.category || 'General Category'}</p>
+              {modalProducts.map((prod) => {
+                const prodReviews = reviews.filter((r) => r.productId === prod.id);
+                const reviewCount = prodReviews.length;
+                const prodRating = reviewCount > 0 
+                  ? prodReviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewCount
+                  : null;
+
+                return (
+                  <div key={prod.id} className="py-3 flex items-center justify-between">
+                    <div>
+                      <h4 className="font-bold text-slate-900">{prod.name}</h4>
+                      <p className="text-[11px] text-slate-500">{prod.category || 'General Category'}</p>
+                    </div>
+                    <div className="text-right">
+                      {prodRating !== null ? (
+                        <RatingStars rating={Number(prodRating.toFixed(1))} size="sm" showNumber />
+                      ) : (
+                        <span className="text-sm font-bold text-slate-400 block leading-none">—</span>
+                      )}
+                      <span className="text-[10px] text-slate-400 block mt-1">{reviewCount} reviews</span>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <RatingStars rating={4.5} size="sm" showNumber />
-                    <span className="text-[10px] text-slate-400 block">{prod._count?.reviews || 4} reviews</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

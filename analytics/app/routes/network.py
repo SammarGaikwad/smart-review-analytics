@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from app.services.network_service import NetworkService
+from app.services.temporal_network_service import temporal_network_service
 
 router = APIRouter()
 
@@ -32,5 +33,13 @@ def analyze_network(request: NetworkRequest):
     return {
         "success": True,
         "message": "Network analytics calculated successfully",
+        "data": result
+    }
+
+@router.get("/network/temporal")
+def get_temporal_network():
+    result = temporal_network_service.get_temporal_analysis()
+    return {
+        "success": True,
         "data": result
     }

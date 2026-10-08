@@ -34,7 +34,7 @@ services:
       - DATABASE_URL=postgresql://postgres:Sammarga@123@host.docker.internal:6009/smart_review_analytics?schema=public
       - ANALYTICS_URL=http://analytics:8000
       - ANALYTICS_SERVICE_URL=http://analytics:8000
-      - JWT_SECRET=super-secret-jwt-key-change-in-production-2026
+      - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRES_IN=1d
       - CORS_ORIGIN=http://localhost:3000
     extra_hosts:

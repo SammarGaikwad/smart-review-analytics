@@ -91,3 +91,17 @@ export const analyzeReviewKeywords = async (reviewId: string): Promise<AnalyzeKe
     keywords: persistedKeywords,
   };
 };
+
+export const compareKeywords = async (text: string, referenceKeywords: string[], topK: number = 10) => {
+  const response = await axios.post(`${ANALYTICS_URL}/api/analytics/keywords/compare`, {
+    text,
+    referenceKeywords,
+    top_k: topK,
+  });
+  return response.data?.data;
+};
+
+export const benchmarkKeywords = async () => {
+  const response = await axios.post(`${ANALYTICS_URL}/api/analytics/keywords/benchmark`);
+  return response.data?.data;
+};

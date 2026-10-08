@@ -4,7 +4,7 @@ pipeline {
     environment {
         CI = 'true'
         NODE_ENV = 'test'
-        CI_DB_URL = 'postgresql://ci_user:ci_secret_password@localhost:5433/smart_review_ci?schema=public'
+        CI_DB_URL = credentials('ci-db-url')
     }
 
     options {
